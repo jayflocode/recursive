@@ -5,12 +5,12 @@ import time
 
 # HVG refers to database in which objects are stored
 # In this case we are renaming name to hvg_db for code readability
-
 """  made minor changes to code prior to start of coding, such as naming conventions that the IDE suggested """
 
 
 # The class star has a built-in constructor used to hold the information of a class
 class Star:
+
     def __init__(self, hvg_db, name, mag, spectral, habit, dist):
         self.hvg_db = hvg_db  # reference number  in file (find record in file)
         self.display_name = name  # star name
@@ -21,8 +21,10 @@ class Star:
 
     # print function to test code
     def print_me(self):
-        print("display_name=" + self.display_name + ", magnitude =" + self.magnitude)
-        print("hvg_db=" + self.hvg_db + ", spectral=" + self.spectral_class + ", habitable=" + self.habitable)
+        print("display_name=" + self.display_name + ", magnitude =" +
+              self.magnitude)
+        print("hvg_db=" + self.hvg_db + ", spectral=" + self.spectral_class +
+              ", habitable=" + self.habitable)
 
 
 # Wrap info for one star in a node suitable for placing in the tree
@@ -30,6 +32,7 @@ class Star:
 # helps build tree and contains a star (ref to line 35)
 # adds left and right reference
 class TreeNode:
+
     def __init__(self, star):
         self.left = None
         self.right = None
@@ -64,6 +67,7 @@ class TreeNode:
 
 
 class Tree:
+
     def __init__(self, name):
         self.name = name
         self.node_num = 0
@@ -76,7 +80,8 @@ class Tree:
 
         if self.root is None:
             self.root = star  # sol is assigned as first value
-            print("Root Assigned to Value: " + str(self.root.key + "\n"))  # prints value of root
+            print("Root Assigned to Value: " +
+                  str(self.root.key + "\n"))  # prints value of root
         else:
             current = self.root
             while current is not None:
@@ -92,6 +97,49 @@ class Tree:
                         current = None
                     else:
                         current = current.right
+    """
+    Zybook section 5.10
+    BSTInsertRecursive(parent, nodeToInsert) {
+       if (nodeToInsert⇢key < parent⇢key) {
+          if (parent⇢left is null)
+             parent⇢left = nodeToInsert
+          else
+             BSTInsertRecursive(parent⇢left, nodeToInsert)
+       }
+       else {
+          if (parent⇢right is null)
+             parent⇢right = nodeToInsert
+          else
+             BSTInsertRecursive(parent⇢right, nodeToInsert)
+       }
+    }
+    """
+
+    # Non-recursive method here. Handle empty root here, otherwise recurse
+    def recursive_insert_wrapper(self, parent, star):
+        # empty tree, create root node
+        new_node = TreeNode(star) 
+        if parent is None :   
+            self.root = TreeNode(star) 
+            print("Root is " + self.root.key)
+        else:
+            # Now recursively traverse existingtree and insert new_node
+            self.insert_rec( parent, new_node)
+
+    # Call method recursively for all but initial root
+    # pretty much like the pseudo-code starting at line 100
+    def insert_rec(self, parent, new_node):
+        if new_node.key < parent.key:
+            if parent.left is None:
+                parent.left = new_node
+            else:
+                self.insert_rec(parent.left, new_node)
+        else: 
+            if parent.right is None:
+                parent.right = new_node
+            else:
+                self.insert_rec(parent.right, new_node)
+            
 
     def preorder_print(self, root):
 
@@ -124,8 +172,10 @@ class Tree:
 # from: https://www.techiedelight.com/c-program-print-binary-tree/
 # provided by instructor
 
+
 # trunk draws the diagram to show pretty output
 class Trunk:
+
     def __init__(self, prev=None, str=None):
         self.prev = prev
         self.str = str
@@ -182,17 +232,15 @@ def main():
         t0 = time.perf_counter_ns()
 
         obs_processed = 0
-
+        
         for row in lines:
             # hvg_db, name, mag, spectral, habit, dist)
             this_star = Star(row[0], row[3], row[16], row[11], row[2], row[12])
-            # print(this_star)
-            star_tree.insert(this_star)
+            star_tree.recursive_insert_wrapper(star_tree.root, this_star)
             obs_processed = obs_processed + 1
 
     t1 = time.perf_counter_ns() - t0
     print("elapsed ms = " + str(t1 / 1000))
-
     print("obs_processed = " + str(obs_processed))
 
     # Your test and debug code here...
@@ -200,7 +248,7 @@ def main():
 
     # print the tree in quasi-graphic form
     print_tree(star_tree.root, None, False)
-    print()
+    print("***")
 
     #
     # Add three or more tests here, including not found case
